@@ -49,7 +49,12 @@ fun Navigation(modifier: Modifier = Modifier) {
                 }
             )
         ) { entry ->
-            DetailScreen(name = entry.arguments?.getString("name"))
+            DetailScreen(name = entry.arguments?.getString("name"), navController)
+        }
+        composable(
+            route = Screen.ThirdScreen.route,
+        ) {
+            ThirdScreen()
         }
     }
 }
@@ -71,6 +76,7 @@ fun MainScreen(
             onValueChange = { text = it },
             modifier = Modifier.fillMaxWidth()
         )
+
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
@@ -80,17 +86,49 @@ fun MainScreen(
         ) {
             Text(text = "To Detail Screen")
         }
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Button(
+            onClick = {
+                navController.navigate(Screen.ThirdScreen.route)
+            }, modifier = Modifier.align(Alignment.End)
+        ) {
+            Text("Navigate to the third screen")
+        }
     }
 }
 
 @Composable
 fun DetailScreen(
     name: String?,
+    navController: NavController
 ) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier.fillMaxSize()
+    ) {
+        Text(text = "Hello $name")
+
+        Spacer(Modifier.height(8.dp))
+
+        Button(
+            onClick = {
+                navController.navigate(Screen.ThirdScreen.route)
+            },
+        ) {
+            Text("Navigate to the third screen")
+        }
+
+    }
+}
+
+@Composable
+fun ThirdScreen() {
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier.fillMaxSize()
     ) {
-        Text(text = "Hello $name")
+        Text("Third screen")
     }
 }

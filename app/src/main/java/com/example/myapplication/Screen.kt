@@ -5,6 +5,7 @@ sealed class Screen(
 ) {
     object MainScreen : Screen("main_screen")
     object DetailScreen : Screen("detail_screen")
+    object ThirdScreen : Screen("third_screen")
 
     fun withArgs(vararg args: String): String {
         return buildString{
