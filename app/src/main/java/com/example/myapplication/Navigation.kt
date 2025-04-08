@@ -1,7 +1,6 @@
 package com.example.myapplication
 
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -12,60 +11,50 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.MutableState
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
-import androidx.navigation.NavHost
-import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import androidx.navigation.navArgument
+import androidx.navigation.toRoute
 
 @Composable
 fun Navigation(modifier: Modifier = Modifier) {
     val navController = rememberNavController()
-    NavHost(navController = navController, startDestination = Screen.MainScreen.route) {
-        composable(route = Screen.MainScreen.route) {
+    NavHost(navController = navController, startDestination = MainScreen, modifier) {
+        composable<MainScreen> {
             MainScreen(
-                navController, Modifier
+                { text -> navController.navigate(DetailsScreen(text)) },
+                { navController.navigate(ThirdScreen) },
+                Modifier
                     .fillMaxSize()
                     .padding(horizontal = 50.dp)
             )
         }
-        composable(
-            route = Screen.DetailScreen.route + "/{name}",
-            arguments = listOf(
-                navArgument("name") {
-                    type = NavType.StringType
-                    nullable = true
-                }
-            )
-        ) { entry ->
-            DetailScreen(name = entry.arguments?.getString("name"), navController)
+        composable<DetailsScreen> { entry ->
+            val route: DetailsScreen = entry.toRoute()
+            DetailScreen(name = route.name, navController)
         }
-        composable(
-            route = Screen.ThirdScreen.route,
-        ) {
-            ThirdScreen(navController)
+        composable<ThirdScreen> {
+            ThirdScreen { navController.popBackStack() }
         }
     }
 }
 
 @Composable
 fun MainScreen(
-    navController: NavController,
+    navigateToDetails: (String) -> Unit,
+    toThirdScreen: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var text by remember {
-        mutableStateOf(" ")
+        mutableStateOf("")
     }
     Column(
         verticalArrangement = Arrangement.Center,
@@ -80,9 +69,8 @@ fun MainScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Button(
-            onClick = {
-                navController.navigate(Screen.DetailScreen.withArgs(text))
-            }, modifier = Modifier.align(Alignment.End)
+            onClick = { navigateToDetails(text) },
+            modifier = Modifier.align(Alignment.End),
         ) {
             Text(text = "To Detail Screen")
         }
@@ -90,7 +78,7 @@ fun MainScreen(
 
         Button(
             onClick = {
-                navController.navigate(Screen.ThirdScreen.route)
+                toThirdScreen()
             }, modifier = Modifier.align(Alignment.End)
         ) {
             Text("Navigate to the third screen")
@@ -114,7 +102,7 @@ fun DetailScreen(
 
         Button(
             onClick = {
-                navController.navigate(Screen.ThirdScreen.route)
+                navController.navigate(ThirdScreen)
             },
         ) {
             Text("Navigate to the third screen")
@@ -124,7 +112,7 @@ fun DetailScreen(
 
         Button(
             onClick = {
-                navController.navigate(Screen.MainScreen.route)
+                navController.navigate(MainScreen)
             },
         ) {
             Text("Exit")
@@ -135,7 +123,7 @@ fun DetailScreen(
 
 @Composable
 fun ThirdScreen(
-    navController: NavController,
+    onPrevScreen: () -> Unit,
 ) {
     Column(
         verticalArrangement = Arrangement.Center,
@@ -148,7 +136,7 @@ fun ThirdScreen(
 
         Button(
             onClick = {
-                navController.navigate(Screen.MainScreen.route)
+                onPrevScreen()
             },
         ) {
             Text("Exit")
