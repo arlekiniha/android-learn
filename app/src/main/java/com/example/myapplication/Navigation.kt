@@ -54,7 +54,7 @@ fun Navigation(modifier: Modifier = Modifier) {
         composable(
             route = Screen.ThirdScreen.route,
         ) {
-            ThirdScreen()
+            ThirdScreen(navController)
         }
     }
 }
@@ -120,15 +120,38 @@ fun DetailScreen(
             Text("Navigate to the third screen")
         }
 
+        Spacer(Modifier.height(8.dp))
+
+        Button(
+            onClick = {
+                navController.navigate(Screen.MainScreen.route)
+            },
+        ) {
+            Text("Exit")
+        }
+
     }
 }
 
 @Composable
-fun ThirdScreen() {
-    Box(
-        contentAlignment = Alignment.Center,
+fun ThirdScreen(
+    navController: NavController,
+) {
+    Column(
+        verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
         modifier = Modifier.fillMaxSize()
     ) {
         Text("Third screen")
+
+        Spacer(Modifier.height(8.dp))
+
+        Button(
+            onClick = {
+                navController.navigate(Screen.MainScreen.route)
+            },
+        ) {
+            Text("Exit")
+        }
     }
 }
